@@ -1,0 +1,86 @@
+$ NASTRAN input file created by the MSC MSC.Nastran input file
+$ translator ( MSC.FEA 13.1.116 ) on October   15, 2024 at 14:49:52.
+$ Direct Text Input for Nastran System Cell Section
+$ Direct Text Input for File Management Section
+$ Linear Static Analysis, Database
+SOL 101
+$ Direct Text Input for Executive Control
+CEND
+TITLE = MSC.Nastran job created on 15-Oct-24 at 14:46:47
+ECHO = NONE
+$ Direct Text Input for Global Case Control Data
+SUBCASE 1
+$ Subcase name : Default
+   SUBTITLE=Default
+   SPC = 2
+   LOAD = 2
+   DISPLACEMENT(SORT1,REAL)=ALL
+   SPCFORCES(SORT1,REAL)=ALL
+   STRESS(SORT1,REAL,VONMISES,BILIN)=ALL
+BEGIN BULK
+PARAM    POST    0
+PARAM   PRTMAXIM YES
+$ Direct Text Input for Bulk Data
+$ Elements and Element Properties for region : Prop_Curve_1
+PBAR     1       1      10.     40.     8.      80.
+$ Pset: "Prop_Curve_1" will be imported as: "pbar.1"
+CBAR     1       1       1       2       0.     1.       0.
+CBAR     2       1       2       3       0.     1.       0.
+CBAR     3       1       3       4       0.     1.       0.
+CBAR     4       1       4       5       0.     1.       0.
+CBAR     5       1       5       6       0.     1.       0.
+CBAR     6       1       6       7       0.     1.       0.
+CBAR     7       1       7       8       0.     1.       0.
+CBAR     8       1       8       9       0.     1.       0.
+CBAR     9       1       9       10      0.     1.       0.
+CBAR     10      1       10      11      0.     1.       0.
+$ Elements and Element Properties for region : Prop_Curve_2
+PBAR     2       1      16.     21.33   21.33   36.
+$ Pset: "Prop_Curve_2" will be imported as: "pbar.2"
+CBAR     11      2       11      13      0.     1.       0.
+CBAR     12      2       13      14      0.     1.       0.
+CBAR     13      2       14      15      0.     1.       0.
+CBAR     14      2       15      16      0.     1.       0.
+CBAR     15      2       16      17      0.     1.       0.
+CBAR     16      2       17      18      0.     1.       0.
+CBAR     17      2       18      19      0.     1.       0.
+CBAR     18      2       19      20      0.     1.       0.
+CBAR     19      2       20      21      0.     1.       0.
+CBAR     20      2       21      22      0.     1.       0.
+$ Referenced Material Records
+$ Material Record : mat
+$ Description of Material : Date: 15-Oct-24           Time: 14:34:18
+MAT1     1      210000.         .3
+$ Nodes of the Entire Model
+GRID     1               0.      0.      0.
+GRID     2              100.     0.      0.
+GRID     3              200.     0.      0.
+GRID     4              300.     0.      0.
+GRID     5              400.     0.      0.
+GRID     6              500.     0.      0.
+GRID     7              600.     0.      0.
+GRID     8              700.     0.      0.
+GRID     9              800.     0.      0.
+GRID     10             900.     0.      0.
+GRID     11             1000.    0.      0.
+GRID     13             1000.    0.     200.
+GRID     14             1000.    0.     400.
+GRID     15             1000.    0.     600.
+GRID     16             1000.    0.     800.
+GRID     17             1000.    0.     1000.
+GRID     18             1000.    0.     1200.
+GRID     19             1000.    0.     1400.
+GRID     20             1000.    0.     1600.
+GRID     21             1000.    0.     1800.
+GRID     22             1000.    0.     2000.
+$ Loads for Load Case : Default
+SPCADD   2       1
+LOAD     2      1.      1.       1      1.       3
+$ Displacement Constraints of Load Set : fix
+SPC1     1       123456  1
+$ Nodal Forces of Load Set : forces
+FORCE    1       22      0      500.     0.     -1.      0.
+$ Nodal Forces of Load Set : forces
+MOMENT   3       22      0      141.421 .707107  0.     .707107
+$ Referenced Coordinate Frames
+ENDDATA 0da5c03e
