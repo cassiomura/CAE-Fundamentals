@@ -7,8 +7,9 @@
 """ 
                                PROJECT SCOPE
  ==============================================================================
- This script implements a Finite Element Method (FEM) solver with the following
- constraints:
+ This script implements a Finite Element Method (FEM) solver with an integrated 
+ Graphical User Interface (GUI) for model setup and analysis, coupled with 
+ post-processing visualization tools for result interpretation.
 
  - Input Format:
      The input data must be provided in the .bdf format, which is the native
@@ -32,55 +33,28 @@
 ============================================================================== 
 """
 
+from InterfaceCAE import InterfaceCAE
 import logging
-from PreProcessCAE import get_pre_processing_input
-from PostProcessCAE import get_post_processing_output
-from SolverCAE import solve_system, assemble_global_stiffness_matrix, assemble_global_load_vector, impose_boundary_conditions_penalty_method
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Configure the logging format and level:
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
+def main() -> None:
+    """Main entry point for the FEM solver, initializing and logging execution."""
 
-# Insert the .bdf file name (Ensure that the folder containing this script and the .bdf file is open in your IDE):
-INPUT_FILE_NAME = "Cases/CBAR_Benchmark/CBAR_Benchmark.bdf"
-OUTPUT_FILE_NAME = "Cases/CBAR_Benchmark/CBAR_displacement_result.csv"
+    try:
+        setup_logging()
 
-#INPUT_FILE_NAME = "Cases/CTRIA3_Benchmark/CTRIA3_Benchmark.bdf"
-#OUTPUT_FILE_NAME = "Cases/CTRIA3_Benchmark/CTRIA3_displacement_result.csv"
+        logging.info("Launching the FEM Solver user interface and processing data...")
+        InterfaceCAE()
 
-#INPUT_FILE_NAME = "Cases/CQUAD4_Benchmark/CQUAD4_Benchmark.bdf"
-#OUTPUT_FILE_NAME = "Cases/CQUAD4_Benchmark/CQUAD4_displacement_result.csv"
+        logging.info("FEM Solver execution completed successfully. Exiting...")
+        exit(0)
 
-#INPUT_FILE_NAME = "Cases/CTETRA_Benchmark/CTETRA_Benchmark.bdf"
-#OUTPUT_FILE_NAME = "Cases/CTETRA_Benchmark/CTETRA_displacement_result.csv"
+    except Exception as e:
+        logging.error(f"Unexpected error during solver execution: {e}")
+        exit(1)
 
-#INPUT_FILE_NAME = "Cases/CHEXA_Benchmark/CHEXA_Benchmark.bdf"
-#OUTPUT_FILE_NAME = "Cases/CHEXA_Benchmark/CHEXA_displacement_result.csv"
+def setup_logging():
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def main(input_file_name: str, output_file_name: str) -> None:
-    logging.info(f"(0/6) Reading data ... ")
-    df_nodes, df_elements, df_materials, df_properties, df_loads, df_bcs = get_pre_processing_input(input_file_name, print = False)
-    
-    logging.info(f"(1/6) Assembling the global stiffness matrix ... ")
-    K_global = assemble_global_stiffness_matrix(df_elements, df_nodes, df_materials, df_properties)
-    
-    logging.info(f"(2/6) Assembling the global load vector ... ")
-    F_global = assemble_global_load_vector(df_elements.iloc[0, 0], df_nodes, df_loads)
-
-    logging.info(f"(3/6) Setting the boundary conditions ... ")
-    K_global_bcs, F_global_bcs = impose_boundary_conditions_penalty_method(df_elements.iloc[0, 0], df_nodes, df_bcs, K_global, F_global)
-
-    logging.info(f"(4/6) Solving the linear system ... ")
-    displacement, forces = solve_system(K_global_bcs, F_global_bcs, K_global)
-
-    logging.info(f"(5/6) Computing Post-Process ... ")
-    df_displacement, df_forces, df_stress, df_strain = get_post_processing_output(displacement, forces, df_elements, df_nodes, df_materials, df_properties) 
-    
-    logging.info(f"(6/6) Printing the results ... ")
-    df_displacement.to_csv(output_file_name, index=False, float_format='%.2e')
-
-    df_forces.to_csv(output_file_name.replace("displacement", "forces"), index=False, float_format='%.2e')
-    df_stress.to_csv(output_file_name.replace("displacement", "stresses"), index=False, float_format='%.2e')
-    print("====================================================================================================")
-    
 if __name__ == '__main__':
-    main(INPUT_FILE_NAME, OUTPUT_FILE_NAME)
+    main()

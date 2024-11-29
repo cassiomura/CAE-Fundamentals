@@ -5,6 +5,7 @@
 # ==============================================================================
 import pandas as pd
 import numpy as np
+import pyvista 
 from ElementLibrary.Unidimensional.CBAR import CBAR
 from ElementLibrary.Bidimensional.CTRIA3 import CTRIA3
 from ElementLibrary.Bidimensional.CQUAD4 import CQUAD4
@@ -42,8 +43,12 @@ def create_displacement_dataframe(displacements: np.array, df_nodes: pd.DataFram
         ux_displacements = displacements[:num_nodes]               # x displacements
         uy_displacements = displacements[num_nodes:2*num_nodes]    # y displacements
 
+        # Compute displacement magnitude (for 2D: sqrt(ux^2 + uy^2))
+        u_magnitude = np.sqrt(ux_displacements**2 + uy_displacements**2)
+
         # Create a DataFrame for displacements (ux, uy)
         df_displacements = pd.DataFrame({
+            'u_magnitude': u_magnitude,
             'ux': ux_displacements,
             'uy': uy_displacements,
         })
@@ -55,8 +60,12 @@ def create_displacement_dataframe(displacements: np.array, df_nodes: pd.DataFram
         uy_displacements = displacements[num_nodes:2*num_nodes]    # y displacements
         uz_displacements = displacements[2*num_nodes:3*num_nodes]  # z displacements
 
+        # Compute displacement magnitude (for 3D: sqrt(ux^2 + uy^2 + uz^2))
+        u_magnitude = np.sqrt(ux_displacements**2 + uy_displacements**2 + uz_displacements**2)
+
         # Create a DataFrame for displacements (ux, uy)
         df_displacements = pd.DataFrame({
+            'u_magnitude': u_magnitude,
             'ux': ux_displacements,
             'uy': uy_displacements,
             'uz': uz_displacements,
@@ -72,8 +81,12 @@ def create_displacement_dataframe(displacements: np.array, df_nodes: pd.DataFram
         thetay_displacements = displacements[4*num_nodes:5*num_nodes]    # theta y rotation
         thetaz_displacements = displacements[5*num_nodes:6*num_nodes]    # theta z rotation
 
+        # Compute displacement magnitude (for 3D: sqrt(ux^2 + uy^2 + uz^2))
+        u_magnitude = np.sqrt(ux_displacements**2 + uy_displacements**2 + uz_displacements**2)
+
         # Create a DataFrame for displacements (ux, uy, uz, thetax, thetay, thetaz)
         df_displacements = pd.DataFrame({
+            'u_magnitude': u_magnitude,
             'ux': ux_displacements,
             'uy': uy_displacements,
             'uz': uz_displacements,
@@ -324,3 +337,105 @@ def compute_von_mises_stress(stress_tensor: np.array) -> float:
                                         np.power(principal_stresses[2] - principal_stresses[0], 2)))
     
     return von_mises_stress
+
+def save_results_to_csv(filepath: str, df_displacement: pd.DataFrame, df_forces: pd.DataFrame, df_stress: pd.DataFrame) -> None:
+    # Save nodal displacement results to a CSV file
+    df_displacement.to_csv(filepath.replace(".bdf", "_result_displacement.csv"), index=False, float_format='%.2e')
+
+    # Save nodal force results to a CSV file
+    df_forces.to_csv(filepath.replace(".bdf", "_result_forces.csv"), index=False, float_format='%.2e')
+
+    # Save element stress results to a CSV file
+    df_stress.to_csv(filepath.replace(".bdf", "_result_stress.csv"), index=False, float_format='%.2e')
+
+def create_mesh(df_elements: pd.DataFrame, df_nodes: pd.DataFrame) -> None:
+    # Map Node IDs to indices for PyVista
+    node_id_to_index = {node_id: node_index for node_index, node_id in enumerate(df_nodes['Node ID'])}
+
+    # Convert element connectivity from Node IDs to indices
+    connectivity_indices = []
+    for element_connectivity_str in df_elements['Connectivity']:
+        element_connectivity_ids = np.array(element_connectivity_str.split(), dtype=int)
+        element_connectivity_indices = [node_id_to_index[node_id] for node_id in element_connectivity_ids]
+        connectivity_indices.append([len(element_connectivity_indices)] + element_connectivity_indices)
+
+    # Identify element type and assign corresponding cell type
+    element_type = df_elements['Element Type'].iloc[0]
+    if element_type == 'CBAR':
+        celltypes = np.full(len(connectivity_indices), pyvista.CellType.POLY_LINE, dtype=np.uint8)
+    elif element_type == 'CTRIA3':
+        celltypes = np.full(len(connectivity_indices), pyvista.CellType.TRIANGLE, dtype=np.uint8)
+    elif element_type == 'CQUAD4':
+        celltypes = np.full(len(connectivity_indices), pyvista.CellType.QUAD, dtype=np.uint8)
+    elif element_type == 'CTETRA':
+        celltypes = np.full(len(connectivity_indices), pyvista.CellType.TETRA, dtype=np.uint8)
+    elif element_type == 'CHEXA':
+        celltypes = np.full(len(connectivity_indices), pyvista.CellType.HEXAHEDRON, dtype=np.uint8)
+
+    # Extract node coordinates as a NumPy array
+    np_points = df_nodes[['X', 'Y', 'Z']].to_numpy(dtype=np.float32)
+
+    # Construct the PyVista mesh
+    mesh = pyvista.UnstructuredGrid(connectivity_indices, celltypes, np_points)
+
+    return mesh, element_type
+
+def plot_mesh(df_elements: pd.DataFrame, df_nodes: pd.DataFrame) -> None:
+    # Generate the mesh and determine the element type
+    mesh, element_type = create_mesh(df_elements, df_nodes)
+
+    # Configure and plot the mesh
+    pl = pyvista.Plotter()
+    if element_type == 'CBAR':
+        pl.add_mesh(mesh, render_lines_as_tubes=True, color='white', line_width=10)
+    else:
+        pl.add_mesh(mesh, show_edges=True, color='white')
+    
+    # Add points and visualization features
+    pl.add_points(mesh.points, color='black', point_size=5)
+    pl.show_bounds(location='outer', color='black')
+    pl.show_axes()
+    pl.show()
+
+def plot_results_displacement(df_elements: pd.DataFrame, df_nodes: pd.DataFrame, df_displacement: pd.DataFrame) -> None:
+    # Generate the mesh and identify the element type
+    mesh, element_type = create_mesh(df_elements, df_nodes)
+
+    # Assign the total displacement values to the mesh point data
+    mesh.point_data['Total Displacement'] = df_displacement['u_magnitude']
+
+    # Configure the plot specifically for CBAR elements (beam-like structures)
+    pl = pyvista.Plotter()
+    if element_type == 'CBAR':
+        pl.add_mesh(mesh, scalars='Total Displacement', render_lines_as_tubes=True, cmap='coolwarm', line_width=10)
+        pl.add_text("Total Displacement", font_size=12)
+        pl.add_points(mesh.points, color='black', point_size=5)
+        pl.show_bounds(location='outer', color='black')
+        pl.show_axes()
+        pl.show()
+    else:
+        pl.add_mesh(mesh, scalars='Total Displacement', show_edges=True, cmap='coolwarm')
+        pl.add_text("Total Displacement", font_size=12)
+        pl.add_points(mesh.points, color='black', point_size=3)
+        pl.show_bounds(location='outer', color='black')
+        pl.show_axes()
+    pl.camera_position = 'iso'
+    pl.show()
+    return
+
+def plot_results_stress(df_elements: pd.DataFrame, df_nodes: pd.DataFrame, df_stress: pd.DataFrame) -> None:
+    # Generate the mesh and identify the element type
+    mesh, element_type = create_mesh(df_elements, df_nodes)
+    
+    # Assign Von Mises stress values to the mesh cell data
+    mesh.cell_data['Von Mises Stress'] = df_stress['von_mises']
+
+    pl = pyvista.Plotter()
+    if element_type != 'CBAR':
+        pl.add_text("Von Mises Stress", font_size=12)
+        pl.add_mesh(mesh, scalars='Von Mises Stress', show_edges=True, cmap='coolwarm')
+        pl.show_bounds(location='outer', color='black')
+        pl.show_axes()
+    pl.camera_position = 'iso'
+    pl.show()
+    return

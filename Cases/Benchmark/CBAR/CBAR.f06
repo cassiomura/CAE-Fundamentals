@@ -1,0 +1,346 @@
+1
+ 
+ 
+ 
+ 
+                     THIS PROGRAM IS CONFIDENTIAL AND A TRADE SECRET OF MSC.SOFTWARE CORPORATION.  THE RECEIPT OR    
+                  POSSESSION OF THIS PROGRAM DOES NOT CONVEY ANY RIGHTS TO REPRODUCE OR DISCLOSE ITS CONTENTS, OR TO 
+                 MANUFACTURE, USE, OR SELL ANYTHING HEREIN, IN WHOLE OR IN PART, WITHOUT THE SPECIFIC WRITTEN CONSENT
+                                                    OF MSC.SOFTWARE CORPORATION.                                     
+ 
+ 
+                                              * * * * * * * * * * * * * * * * * * * *
+                                              * * * * * * * * * * * * * * * * * * * *
+                                              * *                                 * *
+                                              * *           MSC.SOFTWARE          * *
+                                              * *               CORP              * *
+                                              * *                                 * *
+                                              * *      M S C . N a s t r a n      * *
+                                              * *                                 * *
+                                              * *                                 * *
+                                              * *                                 * *
+                                              * *        Version 2005.1.0         * *
+                                              * *             2005R2              * *
+                                              * *                                 * *
+                                              * *                                 * *
+                                              * *          JUN 17, 2005           * *
+                                              * *                                 * *
+                                              * *               AMD               * *
+                                              * *MODEL AMD Ryzen 7 3700X 8-Core P * *
+                                              * *   Windows XP 5.1 (Build 2600)   * *
+                                              * *                                 * *
+                                              * *                                 * *
+                                              * * * * * * * * * * * * * * * * * * * *
+                                              * * * * * * * * * * * * * * * * * * * *
+1News file - (6/03/05):
+  
+ Thank you for choosing MSC.Nastran, the industry standard in FEA, and Welcome
+ to MSC.Nastran 2005 r2.
+  
+ You can find version-specific online documentation, and online technical support
+ at:
+  
+    http://www.mscsoftware.com/support/prod_support/nastran/
+  
+ Also at the technical support location is a searchable list of technical
+ application notes and the current error/avoidance list. Please don't hesitate
+ to contact your nearest technical support representative if you require
+ assistance.
+  
+    http://www.mscsoftware.com/about/locate/
+  
+ The arbitrary beam cross section, explicit nonlinear (SOL 700), and the new
+ nonlinear (SOL 400) solution sequences, are regarded as pre-release capabilities
+ and are still undergoing testing and verification.  These capabilities should
+ not be employed in any analysis except for the purpose of testing and verifying
+ the functionality and working of the capabilities themselves.
+  
+ MSC.Nastran 2005 r2 is mainly focused on improving quality, accuracy and
+ ease-of-use, but also introduces new capabilities, some of which were made
+ available as pre-release functionality in MSC.Nastran 2005 r1. In addition,
+ significant advancements have been made regarding performance and scalability of
+ the program.  Some of the new features and enhancements are listed below.
+  
+ Nonlinear
+ - MSC.Nastran Implicit Nonlinear (SOL 600) - We have addressed many known
+   issues, improved memory usage, improved output options, added beam, bar, and
+   shell offsets, and thermal contact
+ - MSC.Nastran Explicit Nonlinear (SOL 700) pre-release - you can now
+   execute LS-Dyna from inside MSC.Nastran to perform crash and impact
+   analyses
+  
+ Numeric Enhancements
+ - Multi-level DMP - an enhanced Lanczos modal extraction methodology that
+   improves scalability and efficiently handles large normal modes analyses with
+   very frequency ranges
+ - MDACMS enhanced robustness, improved handling of large masses, and improved
+   performance
+ - Distributed memory parallel MPYAD
+  
+ Elements
+ - CFAST - a new fastener element based on user defined stiffness values.
+ - Arbitrary beam cross section pre-release capability - you can specify cross
+   section shapes using POINT entries, and optimize them in SOL 200
+ - Enhanced nonstructural mass element summary printout - ELSUM
+1- spatially dependent heat transfer coefficient
+ - Heat transfer coefficient as a function of two variables
+ - Thermal analysis flux output
+  
+ Optimization
+ - MSC.Nastran Topology Optimization - this addition to the existing SOL 200
+   optimization solution sequence allows optimization analyses to be performed
+   that require many design variables
+  
+ Further Enhancements
+ - Larger XDB database support
+ - MATMOD option 16 - we have removed many previous limitations with this
+   matrix output capability
+1                                                                           OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE     1
+                                                                                                                                    
+0        N A S T R A N    F I L E    A N D    S Y S T E M    P A R A M E T E R    E C H O                                           
+0                                                                                                                                   
+                                                                                                                                    
+                                                                                                                                    
+     NASTRAN OP2NEW=0 $ MSC.NASTRAN .LCL FILE                                        
+     NASTRAN BUFFSIZE=8193 $(C:/MSC.SOFTWARE/MSC.NASTRAN/CONF/NAST20051.RCF[2])      
+     NASTRAN REAL=936116224 $(PROGRAM DEFAULT)                                       
+     $ NASTRAN INPUT FILE CREATED BY THE MSC MSC.NASTRAN INPUT FILE                  
+     $ TRANSLATOR ( MSC.FEA 13.1.116 ) ON OCTOBER   15, 2024 AT 14:49:52.            
+     $ DIRECT TEXT INPUT FOR NASTRAN SYSTEM CELL SECTION                             
+     $ DIRECT TEXT INPUT FOR FILE MANAGEMENT SECTION                                 
+     $ LINEAR STATIC ANALYSIS, DATABASE                                              
+1                                                                           OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE     2
+                                                                                                                                    
+0        N A S T R A N    E X E C U T I V E    C O N T R O L    E C H O                                                             
+0                                                                                                                                   
+                                                                                                                                    
+                                                                                                                                    
+     SOL 101                                                                                 
+     $ DIRECT TEXT INPUT FOR EXECUTIVE CONTROL                                               
+     CEND                                                                                    
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE     3
+                                                                                                                                    
+0                                                                                                                                   
+0                                        C A S E    C O N T R O L    E C H O                                                        
+                 COMMAND                                                                                                            
+                 COUNT                                                                                                              
+                  1      TITLE = MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                                
+                  2      ECHO = NONE                                                                             
+                  3      $ DIRECT TEXT INPUT FOR GLOBAL CASE CONTROL DATA                                        
+                  4      SUBCASE 1                                                                               
+                  5      $ SUBCASE NAME : DEFAULT                                                                
+                  6         SUBTITLE=DEFAULT                                                                     
+                  7         SPC = 2                                                                              
+                  8         LOAD = 2                                                                             
+                  9         DISPLACEMENT(SORT1,REAL)=ALL                                                         
+                 10         SPCFORCES(SORT1,REAL)=ALL                                                            
+                 11         STRESS(SORT1,REAL,VONMISES,BILIN)=ALL                                                
+                 12      BEGIN BULK                                                                              
+0                             INPUT BULK DATA ENTRY COUNT =      66
+0                       TOTAL COUNT=        52
+ *** USER WARNING MESSAGE 4124 (IFS3P)
+     THE SPCADD OR MPCADD UNION CONSISTS OF A SINGLE SET.
+
+
+                                        M O D E L   S U M M A R Y
+
+                                   NUMBER OF GRID     POINTS   =       21
+ 
+                                   NUMBER OF CBAR     ELEMENTS =       20
+ 
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE     4
+                                                                                                                                    
+0                                                                                                                                   
+ *** USER INFORMATION MESSAGE 7310 (VECPRN)
+     ORIGIN OF SUPERELEMENT BASIC COORDINATE SYSTEM WILL BE USED AS REFERENCE LOCATION.
+     RESULTANTS ABOUT ORIGIN OF SUPERELEMENT BASIC COORDINATE SYSTEM IN SUPERELEMENT BASIC SYSTEM COORDINATES.
+0                                                  OLOAD    RESULTANT       
+  SUBCASE/    LOAD
+  DAREA ID    TYPE       T1            T2            T3            R1            R2            R3
+0        1     FX    0.000000E+00     ----          ----          ----       0.000000E+00  0.000000E+00                             
+               FY       ----      -5.000000E+02     ----       1.000000E+06     ----      -5.000000E+05                             
+               FZ       ----          ----       0.000000E+00  0.000000E+00  0.000000E+00     ----                                  
+               MX       ----          ----          ----       9.999979E+01     ----          ----                                  
+               MY       ----          ----          ----          ----       0.000000E+00     ----                                  
+               MZ       ----          ----          ----          ----          ----       9.999979E+01                             
+             TOTALS  0.000000E+00 -5.000000E+02  0.000000E+00  1.000100E+06  0.000000E+00 -4.999000E+05
+ *** SYSTEM INFORMATION MESSAGE 6916 (DFMSYN)
+     DECOMP ORDERING METHOD CHOSEN: BEND, ORDERING METHOD USED: BEND
+  
+ *** SYSTEM INFORMATION MESSAGE 4159 (DFMSA)
+     THE DECOMPOSITION OF KLL      YIELDS A MAXIMUM MATRIX-TO-FACTOR-DIAGONAL RATIO OF    2.252700E+04
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE     5
+                                                                                                                                    
+0                                                                                                            SUBCASE 1              
+ *** USER INFORMATION MESSAGE 5293 (SSG3A)
+    FOR DATA BLOCK KLL     
+    LOAD SEQ. NO.             EPSILON              EXTERNAL WORK      EPSILONS LARGER THAN 0.001 ARE FLAGGED WITH ASTERISKS
+                1         -2.4548129E-13          1.5679250E+08
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE     6
+                                                                                                                                    
+0                                                                                                                                   
+ *** USER INFORMATION MESSAGE 7310 (VECPRN)
+     ORIGIN OF SUPERELEMENT BASIC COORDINATE SYSTEM WILL BE USED AS REFERENCE LOCATION.
+     RESULTANTS ABOUT ORIGIN OF SUPERELEMENT BASIC COORDINATE SYSTEM IN SUPERELEMENT BASIC SYSTEM COORDINATES.
+0                                                  SPCFORCE RESULTANT       
+  SUBCASE/    LOAD
+  DAREA ID    TYPE       T1            T2            T3            R1            R2            R3
+0        1     FX    0.000000E+00     ----          ----          ----       0.000000E+00  0.000000E+00                             
+               FY       ----       5.000000E+02     ----       0.000000E+00     ----       0.000000E+00                             
+               FZ       ----          ----       0.000000E+00  0.000000E+00  0.000000E+00     ----                                  
+               MX       ----          ----          ----      -1.000100E+06     ----          ----                                  
+               MY       ----          ----          ----          ----       0.000000E+00     ----                                  
+               MZ       ----          ----          ----          ----          ----       4.999000E+05                             
+             TOTALS  0.000000E+00  5.000000E+02  0.000000E+00 -1.000100E+06  0.000000E+00  4.999000E+05
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE     7
+                                                                                                                                    
+0                                                                                                                                   
+0                                                  MAXIMUM  SPCFORCES       
+  SUBCASE/
+  DAREA ID        T1             T2             T3             R1             R2             R3
+0        1   0.0000000E+00  5.0000000E+02  0.0000000E+00  1.0001000E+06  0.0000000E+00  4.9990000E+05
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE     8
+                                                                                                                                    
+0                                                                                                                                   
+0                                                  MAXIMUM  DISPLACEMENTS   
+  SUBCASE/
+  DAREA ID        T1             T2             T3             R1             R2             R3
+0        1   0.0000000E+00  6.2710031E+05  0.0000000E+00  3.7807120E+02  0.0000000E+00  2.9750000E+01
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE     9
+                                                                                                                                    
+0                                                                                                                                   
+0                                                  MAXIMUM  APPLIED LOADS   
+  SUBCASE/
+  DAREA ID        T1             T2             T3             R1             R2             R3
+0        1   0.0000000E+00  5.0000000E+02  0.0000000E+00  9.9999786E+01  0.0000000E+00  9.9999786E+01
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE    10
+     DEFAULT                                                                                                                        
+0                                                                                                            SUBCASE 1              
+ 
+                                             D I S P L A C E M E N T   V E C T O R
+ 
+      POINT ID.   TYPE          T1             T2             T3             R1             R2             R3
+             1      G      0.0            0.0            0.0            0.0            0.0            0.0
+             2      G      0.0           -2.876389E+02   0.0            1.547774E+01   0.0           -5.653572E+00
+             3      G      0.0           -1.110873E+03   0.0            3.095548E+01   0.0           -1.071190E+01
+             4      G      0.0           -2.410178E+03   0.0            4.643322E+01   0.0           -1.517500E+01
+             5      G      0.0           -4.126032E+03   0.0            6.191096E+01   0.0           -1.904286E+01
+             6      G      0.0           -6.198909E+03   0.0            7.738869E+01   0.0           -2.231548E+01
+             7      G      0.0           -8.569286E+03   0.0            9.286643E+01   0.0           -2.499286E+01
+             8      G      0.0           -1.117764E+04   0.0            1.083442E+02   0.0           -2.707500E+01
+             9      G      0.0           -1.396444E+04   0.0            1.238219E+02   0.0           -2.856190E+01
+            10      G      0.0           -1.687018E+04   0.0            1.392997E+02   0.0           -2.945357E+01
+            11      G      0.0           -1.983532E+04   0.0            1.547774E+02   0.0           -2.975000E+01
+            13      G      0.0           -5.510739E+04   0.0            1.971992E+02   0.0           -2.974312E+01
+            14      G      0.0           -9.841733E+04   0.0            2.351560E+02   0.0           -2.973624E+01
+            15      G      0.0           -1.488721E+05   0.0            2.686479E+02   0.0           -2.972936E+01
+            16      G      0.0           -2.055788E+05   0.0            2.976747E+02   0.0           -2.972249E+01
+            17      G      0.0           -2.676443E+05   0.0            3.222366E+02   0.0           -2.971561E+01
+            18      G      0.0           -3.341758E+05   0.0            3.423335E+02   0.0           -2.970873E+01
+            19      G      0.0           -4.042801E+05   0.0            3.579654E+02   0.0           -2.970185E+01
+            20      G      0.0           -4.770643E+05   0.0            3.691323E+02   0.0           -2.969497E+01
+            21      G      0.0           -5.516353E+05   0.0            3.758343E+02   0.0           -2.968810E+01
+            22      G      0.0           -6.271003E+05   0.0            3.780712E+02   0.0           -2.968122E+01
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE    11
+     DEFAULT                                                                                                                        
+0                                                                                                            SUBCASE 1              
+ 
+                               F O R C E S   O F   S I N G L E - P O I N T   C O N S T R A I N T
+ 
+      POINT ID.   TYPE          T1             T2             T3             R1             R2             R3
+             1      G      0.0            5.000000E+02   0.0           -1.000100E+06   0.0            4.999000E+05
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE    12
+                                                                                                                                    
+0                                                                                                                                   
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE    13
+     DEFAULT                                                                                                                        
+0                                                                                                            SUBCASE 1              
+ 
+                                 S T R E S S E S   I N   B A R   E L E M E N T S          ( C B A R )
+  ELEMENT        SA1            SA2            SA3            SA4           AXIAL          SA-MAX         SA-MIN     M.S.-T
+    ID.          SB1            SB2            SB3            SB4           STRESS         SB-MAX         SB-MIN     M.S.-C
+0       1    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0       2    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0       3    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0       4    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0       5    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0       6    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0       7    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0       8    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0       9    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      10    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      11    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      12    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      13    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      14    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      15    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      16    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE    14
+     DEFAULT                                                                                                                        
+0                                                                                                            SUBCASE 1              
+ 
+                                 S T R E S S E S   I N   B A R   E L E M E N T S          ( C B A R )
+  ELEMENT        SA1            SA2            SA3            SA4           AXIAL          SA-MAX         SA-MIN     M.S.-T
+    ID.          SB1            SB2            SB3            SB4           STRESS         SB-MAX         SB-MIN     M.S.-C
+0      17    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      18    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      19    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+0      20    0.0            0.0            0.0            0.0            0.0            0.0            0.0          
+             0.0            0.0            0.0            0.0                           0.0            0.0          
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE    15
+                                                                                                                                    
+0                                                                                                                                   
+1    MSC.NASTRAN JOB CREATED ON 15-OCT-24 AT 14:46:47                       OCTOBER  15, 2024  MSC.NASTRAN  6/17/05   PAGE    16
+                                                                                                                                    
+0                                                                                                                                   
+ * * * *  D B D I C T   P R I N T  * * * *      SUBDMAP = PRTSUM  ,  DMAP STATEMENT NO.     30
+
+
+
+0                                   * * * *  A N A L Y S I S  S U M M A R Y  T A B L E  * * * *
+0 SEID  PEID PROJ VERS APRCH      SEMG SEMR SEKR SELG SELR MODES DYNRED SOLLIN PVALID SOLNL LOOPID DESIGN CYCLE SENSITIVITY
+ --------------------------------------------------------------------------------------------------------------------------
+     0     0    1    1 '        '    T    T    T    T    T     F      F      T      0     F     -1            0           F
+0SEID = SUPERELEMENT ID.
+ PEID = PRIMARY SUPERELEMENT ID OF IMAGE SUPERELEMENT.
+ PROJ = PROJECT ID NUMBER.
+ VERS = VERSION ID.
+ APRCH = BLANK FOR STRUCTURAL ANALYSIS.  HEAT FOR HEAT TRANSFER ANALYSIS.
+ SEMG = STIFFNESS AND MASS MATRIX GENERATION STEP.
+ SEMR = MASS MATRIX REDUCTION STEP (INCLUDES EIGENVALUE SOLUTION FOR MODES).
+ SEKR = STIFFNESS MATRIX REDUCTION STEP.
+ SELG = LOAD MATRIX GENERATION STEP.
+ SELR = LOAD MATRIX REDUCTION STEP. 
+ MODES = T (TRUE) IF NORMAL MODES OR BUCKLING MODES CALCULATED.
+ DYNRED = T (TRUE) MEANS GENERALIZED DYNAMIC AND/OR COMPONENT MODE REDUCTION PERFORMED.
+ SOLLIN = T (TRUE) IF LINEAR SOLUTION EXISTS IN DATABASE.
+ PVALID = P-DISTRIBUTION ID OF P-VALUE FOR P-ELEMENTS
+ LOOPID = THE LAST LOOPID VALUE USED IN THE NONLINEAR ANALYSIS.  USEFUL FOR RESTARTS.
+ SOLNL = T (TRUE) IF NONLINEAR SOLUTION EXISTS IN DATABASE.
+ DESIGN CYCLE = THE LAST DESIGN CYCLE (ONLY VALID IN OPTIMIZATION).
+ SENSITIVITY = SENSITIVITY MATRIX GENERATION FLAG.
+ 
+ No PARAM values were set in the Control File.
+ 
+1                                        * * * END OF JOB * * *
+ 
+ 

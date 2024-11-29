@@ -5,7 +5,7 @@
 # ==============================================================================
 import pandas as pd
 
-def get_pre_processing_input(filename: str, print: bool) -> tuple: 
+def get_pre_processing_input(filename: str, print_dataframes: bool) -> tuple: 
     # 1. Generate the Node DataFrame:
     df_nodes = create_nodes_dataframe(filename)
 
@@ -25,7 +25,7 @@ def get_pre_processing_input(filename: str, print: bool) -> tuple:
     df_boundary_conditions = create_boundary_conditions_dataframe(filename)
     
     # Print the data if requested:
-    if print:
+    if print_dataframes:
         print_all_dataframes(df_nodes, df_elements, df_materials, df_properties, df_loads, df_boundary_conditions)
         
     return df_nodes, df_elements, df_materials, df_properties, df_loads, df_boundary_conditions
@@ -68,7 +68,7 @@ def create_nodes_dataframe(filename: str) -> pd.DataFrame:
                     z_coords.append(splitted_line[1])
 
     # Create the data frame:
-    df_nodes_PreProcess = pd.DataFrame({
+    df_nodes = pd.DataFrame({
         'Node ID': ids,
         'X': x_coords,
         'Y': y_coords,
@@ -76,15 +76,15 @@ def create_nodes_dataframe(filename: str) -> pd.DataFrame:
     })
 
     # Correct the scientific notation when needed (2.32458-8 to 2.32458E-08).
-    df_nodes_PreProcess[['X', 'Y', 'Z']] = df_nodes_PreProcess[['X', 'Y', 'Z']].apply(lambda col: col.map(fix_scientific_notation))
+    df_nodes[['X', 'Y', 'Z']] = df_nodes[['X', 'Y', 'Z']].apply(lambda col: col.map(fix_scientific_notation))
 
     # Convert 'Node ID' to integers and 'X', 'Y', 'Z' to floats.
-    df_nodes_PreProcess['Node ID'] = pd.to_numeric(df_nodes_PreProcess['Node ID'], downcast='integer', errors='coerce')
-    df_nodes_PreProcess['X'] = pd.to_numeric(df_nodes_PreProcess['X'], errors='coerce')
-    df_nodes_PreProcess['Y'] = pd.to_numeric(df_nodes_PreProcess['Y'], errors='coerce')
-    df_nodes_PreProcess['Z'] = pd.to_numeric(df_nodes_PreProcess['Z'], errors='coerce')
+    df_nodes['Node ID'] = pd.to_numeric(df_nodes['Node ID'], downcast='integer', errors='coerce')
+    df_nodes['X'] = pd.to_numeric(df_nodes['X'], errors='coerce')
+    df_nodes['Y'] = pd.to_numeric(df_nodes['Y'], errors='coerce')
+    df_nodes['Z'] = pd.to_numeric(df_nodes['Z'], errors='coerce')
 
-    return df_nodes_PreProcess
+    return df_nodes
 
 def create_elements_dataframe(filename: str) -> pd.DataFrame:
     TYPE = []               # Element Type
@@ -388,7 +388,7 @@ def create_boundary_conditions_dataframe(filename: str) -> pd.DataFrame:
 
     return df_boundary_conditions_preprocess
 
-def print_all_dataframes(df_nodes, df_elements, df_materials, df_properties, df_loads, df_boundary_conditions) -> None:
+def print_all_dataframes(df_nodes: pd.DataFrame, df_elements: pd.DataFrame, df_materials: pd.DataFrame, df_properties: pd.DataFrame, df_loads: pd.DataFrame, df_boundary_conditions: pd.DataFrame) -> None:
         # Print all data frames into the console
         print_dataframe_configuration(df_nodes, "Nodes Data Frame")
         print_dataframe_configuration(df_elements, "Elements Data Frame")
