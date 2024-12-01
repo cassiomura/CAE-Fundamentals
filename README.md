@@ -17,26 +17,11 @@ The project is structured into distinct modules, encompassing pre-processing, th
 ### Input Format
 The solver accepts input data in the `.bdf` format, which is the native pre-processing file format used by **Patran**.
 ### Supported Element Types
-- **CBAR**: Linear Bar Elements
-  <p align="center">
-  <img src="https://github.com/user-attachments/assets/e1e21396-b2cf-4404-92f1-827fbc0a6fa6" alt="CBAR Benchmark" width="500"/>
-  </p>
-- **CTRIA3**: Linear Triangular Elements
-  <p align="center">
-  <img src="https://github.com/user-attachments/assets/c818c6de-0cfc-4aff-b32f-f97650c46f50" alt="CBAR Benchmark" width="500"/>
-  </p>
-- **CQUAD4**: Linear Quadrilateral Elements
-  <p align="center">
-  <img src="https://github.com/user-attachments/assets/cd795516-c1f8-4691-9415-6d230427dab5" alt="CBAR Benchmark" width="500"/>
-  </p>
-- **CTETRA**: Linear Tetrahedral Elements
-  <p align="center">
-  <img src="https://github.com/user-attachments/assets/be77780a-f721-4a5a-bd31-316a5a924438" alt="CBAR Benchmark" width="500"/>
-  </p>
-- **CHEXA**: Linear Hexahedral Elements
-  <p align="center">
-  <img src="https://github.com/user-attachments/assets/ddac060b-72b0-460e-92bb-47a15c546e70" alt="CBAR Benchmark" width="500"/>
-  </p>
+- **CBAR**: Linear Bar Elements.
+- **CTRIA3**: Linear Triangular Elements.
+- **CQUAD4**: Linear Quadrilateral Elements.
+- **CTETRA**: Linear Tetrahedral Elements.
+- **CHEXA**: Linear Hexahedral Elements.
 ### Load Application
   External loads are limited to **nodal forces**. Distributed forces are not supported.
 ### Analysis Type
