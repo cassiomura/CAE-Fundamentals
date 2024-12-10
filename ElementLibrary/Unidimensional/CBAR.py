@@ -24,7 +24,6 @@ class CBAR(FiniteElement):
         self.Iy = float(df_properties.set_index('Property ID').at[self.element_property_id, 'I22'])
         self.J = float(df_properties.set_index('Property ID').at[self.element_property_id, 'J'])
   
-
         # Read the material data frame information:
         self.E = float(df_materials.set_index('Material ID').at[self.element_material_id, 'E'])
         self.nu = float(df_materials.set_index('Material ID').at[self.element_material_id, 'nu'])
@@ -62,7 +61,7 @@ class CBAR(FiniteElement):
         complete_local_stiffness_matrix = np.zeros((12, 12))
 
         # Axial stiffness matrix and its corresponding DOFs (degrees of freedom).
-        axial_stiffness_matrix = Beam_Axial(self.E, self.A, self.L).assemble_axial_stiffness_matrix()
+        axial_stiffness_matrix = Beam_Axial(self.E, self.A, self.L).assemble_stiffness_matrix()
         dofs_axial = np.array([0, 6])
         
         # Flexural stiffness matrix for bending about the local y-axis and its DOFs.
@@ -74,7 +73,7 @@ class CBAR(FiniteElement):
         dofs_flexural_z = np.array([2, 4, 8, 10])
 
         # Torsional stiffness matrix and its corresponding DOFs.
-        torsional_stiffness_matrix = Beam_Torsional(self.G, self.J, self.L).assemble_torsional_stiffness_matrix()
+        torsional_stiffness_matrix = Beam_Torsional(self.G, self.J, self.L).assemble_stiffness_matrix()
         dofs_torsional = np.array([3, 9])
 
         # Assemble each component stiffness matrix into the complete matrix.

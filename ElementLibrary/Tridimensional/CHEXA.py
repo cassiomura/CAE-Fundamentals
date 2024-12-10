@@ -12,35 +12,8 @@ class CHEXA(Element3D):
         super().__init__(row, df_nodes, df_properties, df_materials)
 
         self.type = "CHEXA"
-
-        # Assemble the stiffness matrix:
-        self.stiffness_matrix = self.assemble_stiffness_matrix()
     
-    def assemble_stiffness_matrix(self):
-        # Stiffness matrix initialization:
-        K = np.zeros((24, 24))
-
-        # Read Gauss Quadrature data:
-        quadrature_points, quadrature_weights = self.compute_quadrature()
-
-        # [D] - Stress - Strain matrix (Plane Stress):
-        D = self.assemble_D_matrix()              
-    
-        # Looping through Gaussian quadrature points and weights to construct the stiffness matrix:
-        for (r, s, t), w in zip(quadrature_points, quadrature_weights):
-
-            # [J] - Jacobian Matrix:
-            _, Jdet = self.assemble_jacobian_matrix(r, s, t)
-
-            # [B] - Strain-Displacement matrix:
-            B = self.assemble_B_matrix(r, s, t)
-
-            # [K] - Stiffness Matrix:
-            K += Jdet*w*np.matmul(B.T, np.matmul(D, B))
-        return K
-
     def compute_quadrature(self):
-        # 2 Points Gauss Quadrature:
         quadrature_points = np.sqrt(3)/3*np.array([[-1, -1, -1],
                                                    [+1, -1, -1],
                                                    [+1, +1, -1],
@@ -55,7 +28,6 @@ class CHEXA(Element3D):
         return quadrature_points, quadrature_weights
 
     def compute_shape_function(self, r: float, s: float, t: float) -> np.array:
-        # Calculate shape functions for the CHEXA element
         shape_functions = 1/8*np.array([(1 - r)*(1 - s)*(1 - t),  #N1
                                         (1 + r)*(1 - s)*(1 - t),  #N2
                                         (1 + r)*(1 + s)*(1 - t),  #N3
@@ -68,8 +40,6 @@ class CHEXA(Element3D):
         return shape_functions
 
     def compute_shape_function_derivatives(self, r: float, s: float, t: float) -> np.array:
-        
-        # Calculate shape functions derivatives for the CHEXA element
         dN_dr = 1/8*np.array([- (1 - s) * (1 - t),  #dN1_dr
                               + (1 - s) * (1 - t),  #dN2_dr
                               + (1 + s) * (1 - t),  #dN3_dr

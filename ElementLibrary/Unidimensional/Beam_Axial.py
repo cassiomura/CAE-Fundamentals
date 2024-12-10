@@ -12,40 +12,94 @@ class Beam_Axial:
         self.A = A_
         self.L = L_
 
-    def quadrature(self):
+    def assemble_stiffness_matrix(self) -> np.array:
+        K = np.zeros((2, 2))
+
+        # [D] - Stress - Strain matrix:
+        D = self.assemble_D_matrix()
+
+        # Read Gauss Quadrature data:
+        quadrature_points, quadrature_weights = self.compute_quadrature()
+
+        # Looping through Gaussian quadrature points and weights to construct the stiffness matrix:
+        for r, w in zip(quadrature_points, quadrature_weights):
+
+            # [J] - Jacobian Matrix:
+            _, Jdet = self.assemble_jacobian_matrix(r)
+
+            # [B] - Strain-Displacement matrix:
+            B = self.assemble_B_matrix(r)
+
+            # [K] - Stiffness Matrix:
+            K += Jdet*w*np.matmul(B.T, D*B)*self.A
+        return K
+    
+    def compute_quadrature(self) -> tuple:
         quadrature_points = np.array([-np.sqrt(3)/3, np.sqrt(3)/3])
         quadrature_weights = np.array([1, 1])
 
         return quadrature_points, quadrature_weights
+    
+    def compute_shape_function(self, r: float) -> np.array:
+        shape_functions = 0.5 * np.array([(1 - r),  #N1
+                                          (1 + r)]) #N2
 
-    def assemble_axial_B_matrix(self, x: float) -> np.array:
-        B_matrix = np.array([- 1/self.L, 1/self.L])
+        return shape_functions
 
-        if B_matrix.ndim == 1:
-            B_matrix = B_matrix.reshape(1, -1)  # Reshape to 1xN (or B.T to Nx1 if needed)
-        return B_matrix
+    def compute_shape_function_derivatives(self, r: float) -> np.array:
+        dN_dr = 0.5 * np.array([- 1,  #dN1_dr
+                                + 1]) #dN2_dr
+        
+        return dN_dr
+    
+    def assemble_jacobian_matrix(self, r: float):
+        jacobian_matrix = np.array([self.L/2])
 
-    def assemble_axial_D_matrix(self) -> float:
+        jacobian_determinant = self.L/2
 
-        D_matrix = self.E*self.A
+        return jacobian_matrix,  jacobian_determinant
+
+    def assemble_D_matrix(self) -> float:
+        D_matrix = self.E
+
         return D_matrix
 
-    def assemble_axial_stiffness_matrix(self):
-        # Stiffness matrix calculation:
-        quadrature_points, quadrature_weights = self.quadrature()
+    def assemble_B_matrix(self, r: float) -> np.array:
+        # [dN] - Shape Functions Natural Derivatives dr:
+        dN_dr = self.compute_shape_function_derivatives(r)
 
-        D = self.assemble_axial_D_matrix()
+        # [P] - Transformation matrix: Shape Functions Natural Derivatives - Displacement:
+        P_matrix = self.assemble_P_matrix(dN_dr)
 
-        K = np.zeros((2, 2))
-        for quadrature_point, quadrature_weight in zip(quadrature_points, quadrature_weights):
-            # Change of variables (x = L/2 + L/2*epsilon):
-            quadrature_point_mapped = 0.5*self.L + 0.5*self.L*quadrature_point
+        # [J] - Jacobian Matrix:
+        J_matrix, _ = self.assemble_jacobian_matrix(r)
 
-            B = self.assemble_axial_B_matrix(quadrature_point_mapped)
+        # [G] - Transformation matrix: Strain - Shape Functions Natural Derivatives:
+        G_matrix = self.assemble_G_matrix(J_matrix)
 
-            K += self.L/2*quadrature_weight*np.matmul(B.T, D*B)
-        return K
+        # [B] - Strain-Displacement matrix:
+        B_matrix = G_matrix*P_matrix
+        B_matrix = B_matrix.reshape(1, -1)  # Reshape to 1xN (or B.T to Nx1 if needed)
 
+        return B_matrix
+    
+    def assemble_G_matrix(self, jacobian_matrix: np.array) -> np.array:
+        # Calculate the inverse of the Jacobian matrix inv([J])
+        inverse_jacobian_matrix = 1/jacobian_matrix
+
+        # Construct the G_matrix using block matrix construction
+        G_matrix = inverse_jacobian_matrix
+        
+        return G_matrix
+    
+    def assemble_P_matrix(self, dN_dr: np.array) -> np.array:
+        # Block matrix of natural derivatives:
+        derivatives_block = dN_dr
+
+        P_matrix = derivatives_block
+    
+        return P_matrix
+    
 #def assemble_K_analytical(E: float, A: float, L: float):
 
 #    K_matrix = np.array([[A*E/L, - A*E/L],

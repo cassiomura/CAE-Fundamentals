@@ -21,6 +21,29 @@ class Element3D(FiniteElement):
         # Assemble the stiffness matrix:
         self.stiffness_matrix = self.assemble_stiffness_matrix()
 
+    def assemble_stiffness_matrix(self):
+        # Stiffness matrix initialization:
+        K = np.zeros((self.num_dofs, self.num_dofs))
+
+        # [D] - Stress - Strain matrix:
+        D = self.assemble_D_matrix()  
+
+        # Read Gauss Quadrature data:
+        quadrature_points, quadrature_weights = self.compute_quadrature()         
+    
+        # Looping through Gaussian quadrature points and weights to construct the stiffness matrix:
+        for (r, s, t), w in zip(quadrature_points, quadrature_weights):
+
+            # [J] - Jacobian Matrix:
+            _, Jdet = self.assemble_jacobian_matrix(r, s, t)
+
+            # [B] - Strain-Displacement matrix:
+            B = self.assemble_B_matrix(r, s, t)
+
+            # [K] - Stiffness Matrix:
+            K += Jdet*w*np.matmul(B.T, np.matmul(D, B))
+        return K
+    
     def assemble_jacobian_matrix(self, r: float, s: float, t: float) -> np.array:
         # Compute natural derivatives:
         dN_dr, dN_ds, dN_dt = self.compute_shape_function_derivatives(r, s, t)
@@ -36,24 +59,24 @@ class Element3D(FiniteElement):
         JacobianDeterminant = np.linalg.det(JacobianMatrix)
 
         return JacobianMatrix, JacobianDeterminant
-
+    
     def assemble_B_matrix(self, r: float, s: float, t: float) -> np.array:
-        # [dN] - Shape Functions Natural Derivatives dr, ds:
+        # [dN] - Shape Functions Natural Derivatives dr, ds dt:
         dN_dr, dN_ds, dN_dt  = self.compute_shape_function_derivatives(r, s, t)
 
         # [P] - Transformation matrix: Shape Functions Natural Derivatives - Displacement:
-        P = self.assemble_P_matrix(dN_dr, dN_ds, dN_dt)
+        P_matrix = self.assemble_P_matrix(dN_dr, dN_ds, dN_dt)
 
         # [J] - Jacobian Matrix:
-        Jmatrix, _ = self.assemble_jacobian_matrix(r, s, t)
+        J_matrix, _ = self.assemble_jacobian_matrix(r, s, t)
 
         # [G] - Transformation matrix: Strain - Shape Functions Natural Derivatives:
-        G = self.assemble_G_matrix(Jmatrix)
+        G_matrix = self.assemble_G_matrix(J_matrix)
 
         # [B] - Strain-Displacement matrix:
-        B = np.matmul(G, P)
+        B_matrix = np.matmul(G_matrix, P_matrix)
 
-        return B
+        return B_matrix
 
     def assemble_D_matrix(self) -> np.array:
         # Construction of the Stress-Strain matrix [D]:
@@ -67,7 +90,6 @@ class Element3D(FiniteElement):
         return D_matrix
 
     def assemble_G_matrix(self, jacobian_matrix: np.array) -> np.array:
-        
         # Calculate the inverse of the Jacobian matrix inv([J])
         inverse_jacobian_matrix = np.linalg.inv(jacobian_matrix)
 

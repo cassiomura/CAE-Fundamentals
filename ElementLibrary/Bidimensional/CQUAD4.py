@@ -13,34 +13,7 @@ class CQUAD4(Element2D):
 
         self.type = "CQUAD4"
 
-        # Assemble the stiffness matrix:
-        self.stiffness_matrix = self.assemble_stiffness_matrix()
-
-    def assemble_stiffness_matrix(self) -> np.array:
-        # Stiffness matrix initialization:
-        K = np.zeros((8, 8))
-
-        # Read Gauss Quadrature data:
-        quadrature_points, quadrature_weights = self.compute_quadrature()
-
-        # [D] - Stress - Strain matrix (Plane Stress):
-        D = self.assemble_D_matrix("plane_stress")              
-
-        # Looping through Gaussian quadrature points and weights to construct the stiffness matrix:
-        for (r, s), w in zip(quadrature_points, quadrature_weights):
-
-            # [J] - Jacobian Matrix:
-            _, Jdet = self.assemble_jacobian_matrix(r, s)
-
-            # [B] - Strain-Displacement matrix:
-            B = self.assemble_B_matrix(r, s)
-
-            # [K] - Stiffness Matrix:
-            K += self.thickness*Jdet*w*np.matmul(B.T, np.matmul(D, B))
-        return K
-
     def compute_quadrature(self) -> tuple:
-        # Quadrature points (r, s coordinates for Gauss points)
         quadrature_points = np.array([[-np.sqrt(3)/3, -np.sqrt(3)/3], 
                                       [np.sqrt(3)/3, -np.sqrt(3)/3],
                                       [np.sqrt(3)/3, np.sqrt(3)/3],
@@ -49,33 +22,23 @@ class CQUAD4(Element2D):
 
         return quadrature_points, quadrature_weights
 
-    def compute_shape_functions(self, r: float, s: float) -> np.array:
-        # Calculate shape functions for the QUAD4 element
-        N1 = 0.25 * (1 - r) * (1 - s)
-        N2 = 0.25 * (1 + r) * (1 - s)
-        N3 = 0.25 * (1 + r) * (1 + s)
-        N4 = 0.25 * (1 - r) * (1 + s)
-    
-        # Return the shape functions as an array
-        shape_functions = np.array([N1, N2, N3, N4])
-
+    def compute_shape_function(self, r: float, s: float) -> np.array:
+        shape_functions = 0.25 * np.array([(1 - r) * (1 - s),  #N1
+                                           (1 + r) * (1 - s),  #N2
+                                           (1 + r) * (1 + s),  #N3
+                                           (1 - r) * (1 + s)]) #N4
+        
         return shape_functions
 
     def compute_shape_function_derivatives(self, r: float, s: float) -> tuple:
-        # Calculate the derivatives of the shape functions with respect to r (dN/dr)
-        dN_dr_1 = -0.25 * (1 - s)
-        dN_dr_2 =  0.25 * (1 - s)
-        dN_dr_3 =  0.25 * (1 + s)
-        dN_dr_4 = -0.25 * (1 + s)
-    
-        # Calculate the derivatives of the shape functions with respect to s (dN/ds)
-        dN_ds_1 = -0.25 * (1 - r)
-        dN_ds_2 = -0.25 * (1 + r)
-        dN_ds_3 =  0.25 * (1 + r)
-        dN_ds_4 =  0.25 * (1 - r)
-
-        # Return the derivatives as two arrays
-        dN_dr = np.array([dN_dr_1, dN_dr_2, dN_dr_3, dN_dr_4])
-        dN_ds = np.array([dN_ds_1, dN_ds_2, dN_ds_3, dN_ds_4])
+        dN_dr = 0.25 * np.array([- (1 - s),  #dN1_dr
+                                 + (1 - s),  #dN2_dr
+                                 + (1 + s),  #dN3_dr
+                                 - (1 + s)]) #dN4_dr
+        
+        dN_ds = 0.25 * np.array([- (1 - r),  #dN1_ds
+                                 - (1 + r),  #dN2_ds
+                                 + (1 + r),  #dN3_ds
+                                 + (1 - r)]) #dN4_ds
 
         return dN_dr, dN_ds

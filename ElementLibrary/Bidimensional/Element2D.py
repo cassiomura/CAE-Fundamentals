@@ -19,6 +19,32 @@ class Element2D(FiniteElement):
         self.E = float(df_materials.set_index('Material ID').at[self.element_material_id, 'E'])
         self.nu = float(df_materials.set_index('Material ID').at[self.element_material_id, 'nu'])
 
+        # Assemble the stiffness matrix:
+        self.stiffness_matrix = self.assemble_stiffness_matrix()
+
+    def assemble_stiffness_matrix(self) -> np.array:
+        # Stiffness matrix initialization:
+        K = np.zeros((self.num_dofs, self.num_dofs))
+
+        # Read Gauss Quadrature data:
+        quadrature_points, quadrature_weights = self.compute_quadrature()
+
+        # [D] - Stress - Strain matrix (Plane Stress):
+        D = self.assemble_D_matrix("plane_stress")              
+    
+        # Looping through Gaussian quadrature points and weights to construct the stiffness matrix:
+        for (r, s), w in zip(quadrature_points, quadrature_weights):
+
+            # [J] - Jacobian Matrix:
+            _, Jdet = self.assemble_jacobian_matrix(r, s)
+
+            # [B] - Strain-Displacement matrix:
+            B = self.assemble_B_matrix(r, s)
+
+            # [K] - Stiffness Matrix:
+            K += self.thickness*Jdet*w*np.matmul(B.T, np.matmul(D, B))
+        return K
+    
     def assemble_jacobian_matrix(self, r: float, s: float) -> np.array:
         # Coordinates of the nodes:
         x = np.array([coord[0] for coord in self.node_coordinates])
