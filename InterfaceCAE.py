@@ -6,10 +6,10 @@
 import time
 import os
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 from PreProcessCAE import get_pre_processing_input
 from PostProcessCAE import get_post_processing_output, save_results_to_csv, plot_mesh, plot_results_displacement, plot_results_stress
-from SolverCAE import solve_system, assemble_global_stiffness_matrix, assemble_global_load_vector, impose_boundary_conditions_penalty_method
+from SolverCAE import solve_linear_static_analysis, assemble_global_stiffness_matrix, assemble_global_load_vector
 
 class InterfaceCAE:
 
@@ -69,12 +69,26 @@ class InterfaceCAE:
         self.solver_label = tk.Label(self.solver_frame, text="2. Solve System", font=('Helvetica', 16, 'bold'))
         self.solver_label.pack(side=tk.TOP, padx=10)
 
+        # Create a sub-frame to contain the label and combobox side by side
+        combobox_frame = tk.Frame(self.solver_frame)
+        combobox_frame.pack(anchor='w', padx=10, pady=10)
+
+        # Label next to the combobox
+        self.solver_label_text = tk.Label(combobox_frame, text="Select Solver Method: ", font=('Times New Roman', 12))
+        self.solver_label_text.pack(side=tk.LEFT)
+
+        # Combobox to select the solver method
+        solver_methods = ["Reduction Method", "Penalty Method"]
+        self.solver_selection_box = tk.ttk.Combobox(combobox_frame, values=solver_methods)
+        self.solver_selection_box.set("Reduction Method")
+        self.solver_selection_box.pack(side=tk.LEFT, padx=5)
+
         # Button to trigger the solver
         self.solve_button = tk.Button(self.solver_frame, text = "Solve", font = ('Times New Roman', 16), command = self.solve_button, width = 30)
-        self.solve_button.pack(padx = 10, pady = 40)
+        self.solve_button.pack(padx = 10, pady = 10)
 
         # Text box to display solver progress and messages
-        self.solver_text = tk.Text(self.solver_frame, height=10, width=50, font=('Times New Roman', 8), state = 'disabled')
+        self.solver_text = tk.Text(self.solver_frame, height=10, width=60, font=('Times New Roman', 8), state = 'disabled')
         self.solver_text.pack(padx=10, pady=10)
 
     def create_postprocess_frame(self) -> None:
@@ -123,7 +137,7 @@ class InterfaceCAE:
   
         self.solver_text.configure(state="normal")
 
-        self.solver_text.insert(tk.END, "(0/6) Reading data ... ")
+        self.solver_text.insert(tk.END, "(0/5) Reading data ... ")
         self.solver_text.update_idletasks()
         start_time = time.time()
         self.df_nodes, self.df_elements, self.df_materials, self.df_properties, self.df_loads, self.df_bcs = get_pre_processing_input(self.filepath, print_dataframes = False)
@@ -132,7 +146,7 @@ class InterfaceCAE:
         self.solver_text.insert(tk.END, f"(Duration: {time_spent:.1f} s)\n")
         self.solver_text.update_idletasks()
         
-        self.solver_text.insert(tk.END, "(1/6) Assembling the global stiffness matrix ... ")
+        self.solver_text.insert(tk.END, "(1/5) Assembling the global stiffness matrix ... ")
         self.solver_text.update_idletasks()
         start_time = time.time()
         K_global = assemble_global_stiffness_matrix(self.df_elements, self.df_nodes, self.df_materials, self.df_properties)
@@ -141,7 +155,7 @@ class InterfaceCAE:
         self.solver_text.insert(tk.END, f"(Duration: {time_spent:.1f} s)\n")
         self.solver_text.update_idletasks()
 
-        self.solver_text.insert(tk.END, "(2/6) Assembling the global load vector ... ")
+        self.solver_text.insert(tk.END, "(2/5) Assembling the global load vector ... ")
         self.solver_text.update_idletasks()
         start_time = time.time()
         F_global = assemble_global_load_vector(self.df_elements.iloc[0, 0], self.df_nodes, self.df_loads)
@@ -150,25 +164,16 @@ class InterfaceCAE:
         self.solver_text.insert(tk.END, f"(Duration: {time_spent:.1f} s)\n")
         self.solver_text.update_idletasks()
 
-        self.solver_text.insert(tk.END, "(3/6) Setting the boundary conditions ... ")
-        self.solver_text.update_idletasks()
+        self.solver_text.insert(tk.END, f"(3/5) Solving the system using the {self.solver_selection_box.get()} ... ")
+        self.solver_text.update_idletasks
         start_time = time.time()
-        K_global_bcs, F_global_bcs = impose_boundary_conditions_penalty_method(self.df_elements.iloc[0, 0], self.df_nodes, self.df_bcs, K_global, F_global)
+        displacement, forces = solve_linear_static_analysis(self.solver_selection_box.get(), self.df_elements.iloc[0, 0], self.df_nodes, self.df_bcs, K_global, F_global)
         end_time = time.time()
         time_spent = end_time - start_time
         self.solver_text.insert(tk.END, f"(Duration: {time_spent:.1f} s)\n")
         self.solver_text.update_idletasks()
 
-        self.solver_text.insert(tk.END, "(4/6) Solving the linear system ... ")
-        self.solver_text.update_idletasks()
-        start_time = time.time()
-        displacement, forces = solve_system(K_global_bcs, F_global_bcs, K_global)
-        end_time = time.time()
-        time_spent = end_time - start_time
-        self.solver_text.insert(tk.END, f"(Duration: {time_spent:.1f} s)\n")
-        self.solver_text.update_idletasks()
-
-        self.solver_text.insert(tk.END, "(5/6) Computing Post-Process ... ")
+        self.solver_text.insert(tk.END, "(4/5) Computing Post-Process ... ")
         self.solver_text.update_idletasks()
         start_time = time.time()
         self.df_displacement, self.df_forces, self.df_stress, self.df_strain = get_post_processing_output(displacement, forces, self.df_elements, self.df_nodes, self.df_materials, self.df_properties)
@@ -177,7 +182,7 @@ class InterfaceCAE:
         self.solver_text.insert(tk.END, f"(Duration: {time_spent:.1f} s)\n")
         self.solver_text.update_idletasks()
 
-        self.solver_text.insert(tk.END, "(6/6) Printing the results ... ")
+        self.solver_text.insert(tk.END, "(5/5) Saving the results as CSV ... ")
         self.solver_text.update_idletasks()
         start_time = time.time()
         save_results_to_csv(self.filepath, self.df_displacement, self.df_forces, self.df_stress)
@@ -237,4 +242,3 @@ class InterfaceCAE:
             plot_results_stress(self.df_elements, self.df_nodes, self.df_stress)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while plotting stree result: {e}")
-        
