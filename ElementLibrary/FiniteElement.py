@@ -22,7 +22,7 @@ class FiniteElement:
         self.element_type = row['Element Type']
         self.element_id = row['Element ID']
         self.element_property_id = row['Property']
-        self.connectivity = np.array(list(map(int, row['Connectivity'].split())), dtype=int) - 1 # Ajusta para um array NumPy
+        self.connectivity = np.array(list(map(int, row['Connectivity'].split())), dtype=int)
         self.node_coordinates = self.get_node_coordinates(df_nodes)
 
         # Get the DOF per node from the class dictionary
@@ -58,11 +58,9 @@ class FiniteElement:
         return np.array(connected_node_coordinates)
     
     def get_global_index_dofs(self, df_nodes: pd.DataFrame) -> np.array:
-        # Get the nodes index in the df_nodes dataframe: 
-        node_ids = self.connectivity + 1
-        global_index_dofs_nodes = np.array([df_nodes[df_nodes['Node ID'] == node_id].index[0] for node_id in node_ids])
-
         num_nodes = df_nodes.shape[0]
+        
+        global_index_dofs_nodes = np.array([df_nodes[df_nodes['Node ID'] == node_id].index[0] for node_id in self.connectivity])
 
         global_index_dofs = []
         for k in range(self.dof_per_node):
