@@ -23,14 +23,13 @@ class Element2D(FiniteElement):
         self.stiffness_matrix = self.assemble_stiffness_matrix()
 
     def assemble_stiffness_matrix(self) -> np.array:
-        # Stiffness matrix initialization:
-        K = np.zeros((self.num_dofs, self.num_dofs))
+        stiffness_matrix = np.zeros((self.num_dofs, self.num_dofs))
 
         # Read Gauss Quadrature data:
         quadrature_points, quadrature_weights = self.compute_quadrature()
 
         # [D] - Stress - Strain matrix (Plane Stress):
-        D = self.assemble_D_matrix("plane_stress")              
+        D_matrix = self.assemble_D_matrix("plane_stress")              
     
         # Looping through Gaussian quadrature points and weights to construct the stiffness matrix:
         for (r, s), w in zip(quadrature_points, quadrature_weights):
@@ -39,11 +38,12 @@ class Element2D(FiniteElement):
             _, Jdet = self.assemble_jacobian_matrix(r, s)
 
             # [B] - Strain-Displacement matrix:
-            B = self.assemble_B_matrix(r, s)
+            B_matrix = self.assemble_B_matrix(r, s)
 
             # [K] - Stiffness Matrix:
-            K += self.thickness*Jdet*w*np.matmul(B.T, np.matmul(D, B))
-        return K
+            stiffness_matrix += self.thickness*Jdet*w*np.matmul(B_matrix.T, np.matmul(D_matrix, B_matrix))
+
+        return stiffness_matrix
     
     def assemble_jacobian_matrix(self, r: float, s: float) -> tuple:
         # Remove the z coordinate of the node_coordinates array.
@@ -65,21 +65,20 @@ class Element2D(FiniteElement):
         dN_dr, dN_ds  = self.compute_shape_function_derivatives(r, s)
 
         # [P] - Transformation matrix: Shape Functions Natural Derivatives - Displacement:
-        P = self.assemble_P_matrix(dN_dr, dN_ds)
+        P_matrix = self.assemble_P_matrix(dN_dr, dN_ds)
 
         # [J] - Jacobian Matrix:
-        Jmatrix, Jdet = self.assemble_jacobian_matrix(r, s)
+        jacobian_matrix, _ = self.assemble_jacobian_matrix(r, s)
 
         # [G] - Transformation matrix: Strain - Shape Functions Natural Derivatives:
-        G = self.assemble_G_matrix(Jmatrix, Jdet)
+        G_matrix = self.assemble_G_matrix(jacobian_matrix)
 
         # [B] - Strain-Displacement matrix:
-        B = np.matmul(G, P)
+        B_matrix = np.matmul(G_matrix, P_matrix)
 
-        return B
+        return B_matrix
 
     def assemble_D_matrix(self, material_type: str) -> np.array:
-        # Construction of the Stress-Strain matrix [D]:
         if material_type == "plane_stress":
             D_matrix = self.E/(1 - np.power(self.nu ,2))*np.array([[1, self.nu,  0], 
                                                                    [self.nu, 1 , 0],
@@ -93,26 +92,23 @@ class Element2D(FiniteElement):
     
         return D_matrix
 
-    def assemble_G_matrix(self, jacobian_matrix: np.array, jacobian_determinant: float) -> np.array:
+    def assemble_G_matrix(self, jacobian_matrix: np.array) -> np.array:
         inverse_jacobian_matrix = np.linalg.inv(jacobian_matrix)
 
-        zeros_1x2 = np.zeros_like(inverse_jacobian_matrix[0])
+        zeros_block_1x2 = np.zeros_like(inverse_jacobian_matrix[0])
         
-        G_matrix = np.block([[inverse_jacobian_matrix[0], zeros_1x2],
-                             [zeros_1x2, inverse_jacobian_matrix[1]],
+        G_matrix = np.block([[inverse_jacobian_matrix[0], zeros_block_1x2],
+                             [zeros_block_1x2, inverse_jacobian_matrix[1]],
                              [inverse_jacobian_matrix[1], inverse_jacobian_matrix[0]]])
         
         return G_matrix
  
     def assemble_P_matrix(self, dN_dr: np.array, dN_ds: np.array) -> np.array:
-        # Block matrix of natural derivatives:
         derivatives_block = np.array([dN_dr.T, dN_ds.T])
 
-        # Create a zero block with the same shape as derivative_block:
-        zero_block = np.zeros_like(derivatives_block)
+        zero_block_2x2 = np.zeros_like(derivatives_block)
 
-        # Assemble the P matrix by stacking and concatenating blocks:
-        P_matrix = np.vstack([np.hstack([derivatives_block, zero_block]),
-                              np.hstack([zero_block, derivatives_block])])
+        P_matrix = np.vstack([np.hstack([derivatives_block, zero_block_2x2]),
+                              np.hstack([zero_block_2x2, derivatives_block])])
     
         return P_matrix
