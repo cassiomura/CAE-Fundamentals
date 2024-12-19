@@ -44,18 +44,15 @@ class Element3D(FiniteElement):
             K += Jdet*w*np.matmul(B.T, np.matmul(D, B))
         return K
     
-    def assemble_jacobian_matrix(self, r: float, s: float, t: float) -> np.array:
-        # Compute natural derivatives:
+    def assemble_jacobian_matrix(self, r: float, s: float, t: float) -> tuple:
         dN_dr, dN_ds, dN_dt = self.compute_shape_function_derivatives(r, s, t)
 
-        # Compute the Jacobian matrix using matrix multiplication
         JacobianMatrix = np.array([
             np.dot(dN_dr, self.node_coordinates),  # [J11, J12, J13]
             np.dot(dN_ds, self.node_coordinates),  # [J21, J22, J23]
             np.dot(dN_dt, self.node_coordinates)   # [J31, J32, J33]
         ])
 
-        # Compute the determinant of the Jacobian matrix:
         JacobianDeterminant = np.linalg.det(JacobianMatrix)
 
         return JacobianMatrix, JacobianDeterminant
@@ -90,13 +87,11 @@ class Element3D(FiniteElement):
         return D_matrix
 
     def assemble_G_matrix(self, jacobian_matrix: np.array) -> np.array:
-        # Calculate the inverse of the Jacobian matrix inv([J])
         inverse_jacobian_matrix = np.linalg.inv(jacobian_matrix)
 
         # Create a zeros row
         zeros_1x3 = np.zeros_like(inverse_jacobian_matrix[0])
 
-        # Construct the G_matrix using block matrix construction
         G_matrix = np.block([[inverse_jacobian_matrix[0], zeros_1x3, zeros_1x3],
                              [zeros_1x3, inverse_jacobian_matrix[1], zeros_1x3],
                              [zeros_1x3, zeros_1x3, inverse_jacobian_matrix[2]],
