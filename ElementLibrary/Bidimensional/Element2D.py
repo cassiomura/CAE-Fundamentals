@@ -106,9 +106,9 @@ class Element2D(FiniteElement):
     def assemble_P_matrix(self, dN_dr: np.array, dN_ds: np.array) -> np.array:
         derivatives_block = np.array([dN_dr.T, dN_ds.T])
 
-        zero_block_2x2 = np.zeros_like(derivatives_block)
+        zero_block = np.zeros_like(derivatives_block)
 
-        P_matrix = np.vstack([np.hstack([derivatives_block, zero_block_2x2]),
-                              np.hstack([zero_block_2x2, derivatives_block])])
+        P_matrix = np.vstack([np.hstack([derivatives_block, zero_block]),
+                              np.hstack([zero_block, derivatives_block])])
     
         return P_matrix

@@ -21,9 +21,7 @@ class InterfaceCAE:
         self.main_window.configure(bg = "white")
         self.main_window.resizable(True, True)
 
-        # Add the application title
-        self.title_label = tk.Label(self.main_window, text='CAE Fundamentals', font=('Montserrat', 32, 'bold'),  bg="white", fg = "black")
-        self.title_label.pack(padx = 10, pady = 10)
+        self.create_title()
 
         # Create frames for different functionalities
         self.create_preprocess_frame()
@@ -37,6 +35,43 @@ class InterfaceCAE:
         # Start the main event loop
         self.main_window.mainloop()
 
+    def create_title(self) -> None:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Define the relative path to the icon file
+        image_path = os.path.join(current_dir, "Logo.png")
+
+        # Load the image
+        image = tk.PhotoImage(file=image_path)
+
+        # Get the original dimensions of the image
+        original_width = image.width()
+        original_height = image.height()
+
+        # Define the maximum width and height you want
+        max_width = 400
+        max_height = 400
+
+        # Calculate the scaling factor while maintaining the aspect ratio
+        scale_width = max_width / original_width
+        scale_height = max_height / original_height
+
+        # Use the smaller scaling factor to maintain the aspect ratio
+        scale_factor = min(scale_width, scale_height)
+
+        # Calculate the new dimensions
+        new_width = int(original_width * scale_factor)
+        new_height = int(original_height * scale_factor)
+
+        # Resize the image using the calculated new dimensions
+        self.resized_image = image.subsample(int(original_width / new_width), int(original_height / new_height))
+
+        # Display the resized image in a label
+        self.logo_image = tk.Label(self.main_window, image=self.resized_image)
+        self.logo_image.pack(padx = 10, pady = 10)
+
+        
+        
     def create_preprocess_frame(self) -> None:
         # Frame for preprocessing section
         self.preprocess_frame = tk.Frame(self.main_window,
