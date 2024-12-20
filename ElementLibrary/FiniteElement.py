@@ -19,14 +19,14 @@ class FiniteElement:
 
     def __init__(self, row, df_nodes, df_properties, df_materials):
         self.row = row
-        self.element_type = row['Element Type']
+        self.type = row['Element Type']
         self.element_id = row['Element ID']
         self.element_property_id = row['Property']
         self.connectivity = np.array(list(map(int, row['Connectivity'].split())), dtype=int)
         self.node_coordinates = self.get_node_coordinates(df_nodes)
 
         # Get the DOF per node from the class dictionary
-        self.dof_per_node = self.DOF_PER_NODE_MAP.get(self.element_type)
+        self.dof_per_node = self.DOF_PER_NODE_MAP.get(self.type)
 
         # Get the number of nodes in the element:
         self.node_per_element = len(self.get_element_connectivity())

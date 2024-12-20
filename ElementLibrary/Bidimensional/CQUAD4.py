@@ -11,8 +11,6 @@ class CQUAD4(Element2D):
     def __init__(self, row, df_nodes, df_properties, df_materials):
         super().__init__(row, df_nodes, df_properties, df_materials)
 
-        self.type = "CQUAD4"
-
     def compute_quadrature(self) -> tuple:
         quadrature_points = np.array([[-np.sqrt(3)/3, -np.sqrt(3)/3], 
                                       [np.sqrt(3)/3, -np.sqrt(3)/3],

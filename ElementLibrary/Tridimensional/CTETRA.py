@@ -11,8 +11,6 @@ class CTETRA(Element3D):
     def __init__(self, row, df_nodes, df_properties, df_materials):
         super().__init__(row, df_nodes, df_properties, df_materials)
 
-        self.type = "CTETRA"
-
     def compute_quadrature(self):
         quadrature_points = np.array([[0.1381966011250105,0.1381966011250105,0.1381966011250105], 
                                       [0.5854101966249685,0.1381966011250105,0.1381966011250105],
@@ -31,7 +29,7 @@ class CTETRA(Element3D):
 
         return shape_functions
 
-    def compute_shape_function_derivatives(self, r: float, s: float, t: float) -> np.array:
+    def compute_shape_function_derivatives(self, r: float, s: float, t: float) -> tuple:
         dN_dr = np.array([- 1,  #dN1_dr
                           + 1,  #dN2_dr
                             0,  #dN3_dr

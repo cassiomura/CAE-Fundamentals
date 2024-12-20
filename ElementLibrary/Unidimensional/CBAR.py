@@ -36,9 +36,6 @@ class CBAR(FiniteElement):
 
         self.alpha = np.arctan2(y2 - y1, x2 - x1)
         self.beta = np.arctan2(z2 - z1, l_xy)
-
-        # Assemble the stiffness matrix:
-        self.stiffness_matrix = self.assemble_stiffness_matrix()
     
     def assemble_stiffness_matrix(self) -> np.array:
 

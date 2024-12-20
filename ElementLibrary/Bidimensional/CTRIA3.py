@@ -11,8 +11,6 @@ class CTRIA3(Element2D):
     def __init__(self, row, df_nodes, df_properties, df_materials):
         super().__init__(row, df_nodes, df_properties, df_materials)
         
-        self.type = "CTRIA3"
-
     def compute_quadrature(self) -> tuple:
         quadrature_points = np.array([[0, 1/2], 
                                       [1/2, 0],

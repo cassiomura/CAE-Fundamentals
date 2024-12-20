@@ -12,12 +12,12 @@ class Element2D(FiniteElement):
         super().__init__(row, df_nodes, df_properties, df_materials)
 
         # Read the property data frame information:
-        self.element_material_id = int(df_properties.set_index('Property ID').at[self.element_property_id, 'Material ID'])
+        element_material_id = int(df_properties.set_index('Property ID').at[self.element_property_id, 'Material ID'])
         self.thickness = float(df_properties.set_index('Property ID').at[self.element_property_id, 'Thickness'])
   
         # Read the material data frame information:
-        self.E = float(df_materials.set_index('Material ID').at[self.element_material_id, 'E'])
-        self.nu = float(df_materials.set_index('Material ID').at[self.element_material_id, 'nu'])
+        self.E = float(df_materials.set_index('Material ID').at[element_material_id, 'E'])
+        self.nu = float(df_materials.set_index('Material ID').at[element_material_id, 'nu'])
 
         # Assemble the stiffness matrix:
         self.stiffness_matrix = self.assemble_stiffness_matrix()

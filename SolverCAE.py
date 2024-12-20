@@ -93,7 +93,8 @@ def assemble_global_stiffness_matrix(df_elements: pd.DataFrame, df_nodes: pd.Dat
 
         # Get global DOF indices and element stiffness matrix
         global_index_dofs = element.global_index_dofs
-        K_element = element.stiffness_matrix
+        #K_element = element.stiffness_matrix
+        K_element = element.assemble_stiffness_matrix()
 
         # Assemble local stiffness matrix into the global matrix
         for i_local, i_global in enumerate(global_index_dofs):

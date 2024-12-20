@@ -10,8 +10,6 @@ class CHEXA(Element3D):
 
     def __init__(self, row, df_nodes, df_properties, df_materials):
         super().__init__(row, df_nodes, df_properties, df_materials)
-
-        self.type = "CHEXA"
     
     def compute_quadrature(self):
         quadrature_points = np.sqrt(3)/3*np.array([[-1, -1, -1],
@@ -39,7 +37,7 @@ class CHEXA(Element3D):
         
         return shape_functions
 
-    def compute_shape_function_derivatives(self, r: float, s: float, t: float) -> np.array:
+    def compute_shape_function_derivatives(self, r: float, s: float, t: float) -> tuple:
         dN_dr = 1/8*np.array([- (1 - s) * (1 - t),  #dN1_dr
                               + (1 - s) * (1 - t),  #dN2_dr
                               + (1 + s) * (1 - t),  #dN3_dr
