@@ -7,7 +7,8 @@ import time
 import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-from PreProcessCAE import get_pre_processing_input
+from PreProcessPatran import get_pre_processing_input_patran
+from PreProcessExcel import get_pre_processing_input_excel
 from PostProcessCAE import get_post_processing_output, save_results_to_csv, plot_mesh, plot_results_displacement, plot_results_stress
 from SolverCAE import solve_linear_static_analysis, assemble_global_stiffness_matrix, assemble_global_load_vector
 
@@ -70,8 +71,6 @@ class InterfaceCAE:
         self.logo_image = tk.Label(self.main_window, image=self.resized_image)
         self.logo_image.pack(padx = 10, pady = 10)
 
-        
-        
     def create_preprocess_frame(self) -> None:
         # Frame for preprocessing section
         self.preprocess_frame = tk.Frame(self.main_window,
@@ -154,7 +153,7 @@ class InterfaceCAE:
         # Open a file dialog in the script's directory, restricted to .bdf file
         file = filedialog.askopenfile(
             mode='r', 
-            filetypes=[('Patran Files', '*.bdf')], 
+            filetypes=[('Patran Files', '*.bdf'), ('Excel Files', '*.xlsx')], 
             initialdir = os.path.dirname(os.path.abspath(__file__)))
         if file:
             # Display the selected file path in the text box (read-only)
@@ -163,6 +162,9 @@ class InterfaceCAE:
             self.preprocess_file_text.delete(1.0, tk.END)  # Clear existing text
             self.preprocess_file_text.insert(tk.END, self.filepath)
             self.preprocess_file_text.configure(state="disabled")
+
+            # Retrieve the file extension
+            _, self.file_extension = os.path.splitext(self.filepath)
 
     def solve_button(self) -> None:
         """Handles the solve button click event to run the FEM solver."""
@@ -175,7 +177,10 @@ class InterfaceCAE:
         self.solver_text.insert(tk.END, "(0/5) Reading data ... ")
         self.solver_text.update_idletasks()
         start_time = time.time()
-        self.df_nodes, self.df_elements, self.df_materials, self.df_properties, self.df_loads, self.df_bcs = get_pre_processing_input(self.filepath, print_dataframes = False)
+        if self.file_extension == '.bdf':
+            self.df_nodes, self.df_elements, self.df_materials, self.df_properties, self.df_loads, self.df_bcs = get_pre_processing_input_patran(self.filepath, print_dataframes = False)
+        elif self.file_extension == '.xlsx':
+            self.df_nodes, self.df_elements, self.df_materials, self.df_properties, self.df_loads, self.df_bcs = get_pre_processing_input_excel(self.filepath, print_dataframes = False)
         end_time = time.time()
         time_spent = end_time - start_time
         self.solver_text.insert(tk.END, f"(Duration: {time_spent:.1f} s)\n")

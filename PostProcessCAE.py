@@ -5,6 +5,7 @@
 # ==============================================================================
 import pandas as pd
 import numpy as np
+import os
 import pyvista 
 from ElementLibrary.Unidimensional.CBAR import CBAR
 from ElementLibrary.Bidimensional.CTRIA3 import CTRIA3
@@ -339,14 +340,16 @@ def compute_von_mises_stress(stress_tensor: np.array) -> float:
     return von_mises_stress
 
 def save_results_to_csv(filepath: str, df_displacement: pd.DataFrame, df_forces: pd.DataFrame, df_stress: pd.DataFrame) -> None:
+    _, file_extension = os.path.splitext(filepath)
+
     # Save nodal displacement results to a CSV file
-    df_displacement.to_csv(filepath.replace(".bdf", "_result_displacement.csv"), index=False, float_format='%.2e')
+    df_displacement.to_csv(filepath.replace(file_extension, "_result_displacement.csv"), index=False, float_format='%.2e')
 
     # Save nodal force results to a CSV file
-    df_forces.to_csv(filepath.replace(".bdf", "_result_forces.csv"), index=False, float_format='%.2e')
+    df_forces.to_csv(filepath.replace(file_extension, "_result_forces.csv"), index=False, float_format='%.2e')
 
     # Save element stress results to a CSV file
-    df_stress.to_csv(filepath.replace(".bdf", "_result_stress.csv"), index=False, float_format='%.2e')
+    df_stress.to_csv(filepath.replace(file_extension, "_result_stress.csv"), index=False, float_format='%.2e')
 
 def create_mesh(df_elements: pd.DataFrame, df_nodes: pd.DataFrame) -> None:
     # Map Node IDs to indices for PyVista
