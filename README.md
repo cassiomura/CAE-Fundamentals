@@ -1,6 +1,7 @@
 # 💻 CAE Fundamentals
-![GUI_interface](https://github.com/user-attachments/assets/1ea24b31-5f21-4751-bf93-c36e3cb27950)
+![GUI_interface](https://github.com/user-attachments/assets/9ad87d7b-9b9a-4c85-96f5-d6e6711b480b)
 ## 🏁 Objective
+
 Develop a Finite Element Method (FEM)-based structural analysis solver capable of processing input data from native commercial software files (e.g., Patran) or custom, intuitive Excel tables.
 
 ## :book: Wiki
